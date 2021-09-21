@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCServerInstaller", "MCServerInstaller\MCServerInstaller.csproj", "{310FE787-74A5-43CC-A6D8-10CAB3032A73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{310FE787-74A5-43CC-A6D8-10CAB3032A73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{310FE787-74A5-43CC-A6D8-10CAB3032A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{310FE787-74A5-43CC-A6D8-10CAB3032A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{310FE787-74A5-43CC-A6D8-10CAB3032A73}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {935E5ADC-5AB9-4000-A898-DD50CC2FF97B}
+	EndGlobalSection
+EndGlobal
