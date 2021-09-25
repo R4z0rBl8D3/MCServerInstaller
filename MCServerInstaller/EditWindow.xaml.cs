@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace MCServerInstaller
 {
@@ -21,6 +22,7 @@ namespace MCServerInstaller
     public partial class EditWindow : Window
     {
         public static List<string> properties = new List<string>();
+        public static string[] saveProperties = { };
         
         public EditWindow()
         {
@@ -30,6 +32,13 @@ namespace MCServerInstaller
 
         private void load()
         {
+            if (!File.Exists(MainWindow.editPath + "\\server.properties"))
+            {
+                StatusTxt.Content = "server.properties failed to load!";
+                MessageBox.Show("Failed to load!");
+                this.Hide();
+                return;
+            }
             StatusTxt.Content = "Loading properties...";
             properties.Clear();
             using (StreamReader sr = new StreamReader(MainWindow.editPath + "\\server.properties"))
@@ -169,6 +178,7 @@ namespace MCServerInstaller
                 {
                     MOTDBox.Text = property.Split('=')[1];
                 }
+                StatusTxt.Content = "";
             }
             using (StreamReader sr = new StreamReader(MainWindow.editPath + "\\StartServer.bat"))
             {
@@ -222,18 +232,128 @@ namespace MCServerInstaller
             }
         }
 
-        private async void onLoad(object sender, RoutedEventArgs e)
+        private void onLoad(object sender, RoutedEventArgs e)
         {
-            while (true)
-            {
-                load();
-                await Task.Delay(1000);
-            }
+            load();
+        }
+
+        private void lineChanger(string newText, string temp, int line_to_edit)
+        {
+            saveProperties[line_to_edit] = newText;
         }
 
         private void save()
         {
-            
+            int i = 0;
+            new ToastContentBuilder()
+                .AddText("Minecraft Server Installer")
+                .AddText("Saving properties...")
+                .Show();
+            saveProperties = new string[properties.Count()];
+            properties.CopyTo(saveProperties);
+            foreach (string property in properties)
+            {
+                if (property.StartsWith("allow-flight"))
+                {
+                    //property.Split('=')[0] + "=" + AllowFlightCheckbox.IsChecked.ToString().ToLower()
+                    saveProperties[i] = property.Split('=')[0] + "=" + AllowFlightCheckbox.IsChecked.ToString().ToLower();
+                }
+                if (property.StartsWith("allow-nether"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + AllowNetherCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("force-gamemode"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + ForceGamemodeCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("hardcore"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + HardcoreCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("online-mode"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + OnlineModeCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("pvp"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + PVPCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("spawn-animals"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + SpawnAnimalsCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("spawn-npcs"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + SpawnNPCsCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("spawn-monsters"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + SpawnMonstersCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("enable-command-block"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + EnableCommandBlocksCheckbox.IsChecked.ToString().ToLower(), MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("difficulty"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + DifficultyBox.Text, MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("server-ip"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + ServerIPBox.Text, MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("server-port"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + ServerPortBox.Text, MainWindow.editPath + "\\server.properties", i);
+                }
+                if (property.StartsWith("motd"))
+                {
+                    lineChanger(property.Split('=')[0] + "=" + MOTDBox.Text, MainWindow.editPath + "\\server.properties", i);
+                }
+                i++;
+            }
+            MessageBox.Show(string.Join(",", saveProperties));
+            File.WriteAllLines(MainWindow.editPath + "\\server.properties", saveProperties);
+            string serverPath = null;
+            using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
+            {
+                string[] files = Directory.GetFiles(MainWindow.editPath);
+                foreach (string file in files)
+                {
+                    if (file.Contains("forge"))
+                    {
+                        serverPath = file;
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("minecraft"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+            }
+            string startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+            if (GuiCheckbox.IsChecked == false)
+            {
+                startup = startup + " nogui";
+            }
+            MessageBox.Show(startup);
+            File.Delete(MainWindow.editPath + "\\StartServer.bat");
+            File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
+            using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
+            {
+                sw.WriteLine(@"cd /d D:\VisualStudioRepos\MCServerInstaller\MCServerInstaller\bin\Debug\" + MainWindow.editPath);
+                sw.WriteLine(startup);
+            }
+            new ToastContentBuilder()
+                 .AddText("Minecraft Server Installer")
+                 .AddText("Save completed!")
+                 .Show();
+            load();
         }
 
         private void ModsDeleteBtn_Click(object sender, RoutedEventArgs e)

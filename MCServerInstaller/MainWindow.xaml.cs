@@ -99,13 +99,6 @@ namespace MCServerInstaller
             Process.Start(@"D:\VisualStudioRepos\MCServerInstaller\MCServerInstaller\bin\Debug\Servers\" + InstalledListBox.SelectedItem.ToString() + "\\StartServer.bat");
         }
 
-        private void lineChanger(string newText, string fileName, int line_to_edit)
-        {
-            string[] arrLine = File.ReadAllLines(fileName);
-            arrLine[line_to_edit - 1] = newText;
-            File.WriteAllLines(fileName, arrLine);
-        }
-
         private async void InstallBtn_Click(object sender, RoutedEventArgs e)
         {
             if (AvailableListBox.SelectedIndex == -1)
@@ -131,8 +124,7 @@ namespace MCServerInstaller
                 {
                     if (file.Contains("forge"))
                     {
-                        serverPath = "Servers\\" + name + "\\Server.jar";
-                        File.Move(file, "Servers\\" + name + "\\Server.jar");
+                        serverPath = file;
                     }
                 }
                 if (serverPath == null)
@@ -141,8 +133,7 @@ namespace MCServerInstaller
                     {
                         if (file.Contains("minecraft"))
                         {
-                            serverPath = "Servers\\" + name + "\\Server.jar";
-                            File.Move(file, "Servers\\" + name + "\\Server.jar");
+                            serverPath = file;
                         }
                     }
                 }
@@ -159,7 +150,14 @@ namespace MCServerInstaller
             string[] arrLine = File.ReadAllLines("Servers\\" + name + "\\eula.txt");
             arrLine[2] = "eula=true";
             File.WriteAllLines("Servers\\" + name + "\\eula.txt", arrLine);
-            Process.Start("Servers\\" + name + "\\StartServer.bat");
+            Process p = new Process();
+            p.StartInfo.FileName = "Servers\\" + name + "\\StartServer.bat";
+            p.Start();
+            while (!Directory.Exists("Servers\\" + name + "\\world"))
+            {
+                await Task.Delay(100);
+            }
+            p.Close();
         }
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
