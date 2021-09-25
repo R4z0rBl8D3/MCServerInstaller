@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace MCServerInstaller
 {
@@ -26,6 +27,11 @@ namespace MCServerInstaller
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            if (Directory.Exists("Servers\\" + NameBox.Text))
+            {
+                MessageBox.Show("That name is already in use!");
+                return;
+            }
             MainWindow.name = NameBox.Text;
             this.Hide();
         }

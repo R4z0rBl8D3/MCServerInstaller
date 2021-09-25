@@ -112,6 +112,10 @@ namespace MCServerInstaller
             {
                 client.DownloadFile(fileUrls + AvailableListBox.SelectedItem, name + ".zip");
             }
+            if (Directory.Exists("Temp\\" + name))
+            {
+                Directory.Delete("Temp\\" + name);
+            }
             ZipFile.ExtractToDirectory(name + ".zip", "Temp");
             File.Delete(name + ".zip");
             Directory.Move("Temp\\" + System.IO.Path.ChangeExtension(AvailableListBox.SelectedItem.ToString(), null), "Servers\\" + name);
@@ -165,7 +169,14 @@ namespace MCServerInstaller
             MessageBoxResult messageResult = MessageBox.Show("Are you sure you want to delete '"  + InstalledListBox.SelectedItem + "'?", "Confirm Delete", MessageBoxButton.YesNo);
             if (messageResult == MessageBoxResult.Yes)
             {
-                Directory.Delete("Servers\\" + InstalledListBox.SelectedItem, true);
+                try
+                {
+                    Directory.Delete("Servers\\" + InstalledListBox.SelectedItem, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             else if (messageResult == MessageBoxResult.No)
             {
