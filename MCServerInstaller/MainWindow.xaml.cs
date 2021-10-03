@@ -30,15 +30,51 @@ namespace MCServerInstaller
         public static int selectedAvailable = -1;
         public static string name = null;
         public static string editPath = null;
+        public static string startupPath = Environment.CurrentDirectory;
+        public static string selectedSoftware = null;
+        public static string selectedVersion = null;
 
         public MainWindow()
         {
             InitializeComponent();
             Loaded += onLoad;
+            SoftwareListBox.Items.Add("CraftBukkit");
+            SoftwareListBox.Items.Add("Fabric");
+            SoftwareListBox.Items.Add("Forge");
+            SoftwareListBox.Items.Add("Magma");
+            SoftwareListBox.Items.Add("Mohist");
+            SoftwareListBox.Items.Add("Paper");
+            SoftwareListBox.Items.Add("Spigot");
+        }
+
+        private string getJavaVersion()
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = "java.exe";
+                psi.Arguments = " -version";
+                psi.RedirectStandardError = true;
+                psi.UseShellExecute = false;
+
+                Process pr = Process.Start(psi);
+                string strOutput = pr.StandardError.ReadLine().Split(' ')[2].Replace("\"", "");
+
+                return (strOutput);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return ("");
+            }
         }
 
         private async void onLoad(object sender, RoutedEventArgs e)
         {
+            if (getJavaVersion().Split('_')[0] != "1.8.0")
+            {
+                MessageBox.Show("Java 8 is not installed, Java 8 is recommended this app");
+            }
             if (File.Exists("versions.txt"))
             {
                 File.Delete("versions.txt");
@@ -80,7 +116,59 @@ namespace MCServerInstaller
                 string line = sr.ReadLine();
                 while (line != null)
                 {
-                    AvailableListBox.Items.Add(line);
+                    if (SoftwareListBox.SelectedIndex == -1)
+                    {
+                        return;
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "Forge")
+                    {
+                        if (line.Contains("Forge"))
+                        {
+                            AvailableListBox.Items.Add(line);
+                        }
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "Spigot")
+                    {
+                        if (line.Contains("Spigot"))
+                        {
+                            AvailableListBox.Items.Add(line.Split('-')[1]);
+                        }
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "Paper")
+                    {
+                        if (line.Contains("paper"))
+                        {
+                            AvailableListBox.Items.Add(line);
+                        }
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "Magma")
+                    {
+                        if (line.Contains("Magma"))
+                        {
+                            AvailableListBox.Items.Add(line);
+                        }
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "Mohist")
+                    {
+                        if (line.Contains("Mohist"))
+                        {
+                            AvailableListBox.Items.Add(line);
+                        }
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "CraftBukkit")
+                    {
+                        if (line.Contains("Bukkit"))
+                        {
+                            AvailableListBox.Items.Add(line.Split('-')[1]);
+                        }
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "Fabric")
+                    {
+                        if (line.Contains("Fabric"))
+                        {
+                            AvailableListBox.Items.Add(line);
+                        }
+                    }
                     line = sr.ReadLine();
                 }
             }
@@ -96,7 +184,8 @@ namespace MCServerInstaller
             Process p = new Process();
             //p.StartInfo.FileName = "Servers\\" + InstalledListBox.SelectedItem.ToString() + "\\StartServer.bat";
             //p.Start();
-            Process.Start(@"D:\VisualStudioRepos\MCServerInstaller\MCServerInstaller\bin\Debug\Servers\" + InstalledListBox.SelectedItem.ToString() + "\\StartServer.bat");
+            p.StartInfo.UseShellExecute = false;
+            Process.Start(startupPath + @"\Servers\" + InstalledListBox.SelectedItem.ToString() + "\\StartServer.bat");
         }
 
         private async void InstallBtn_Click(object sender, RoutedEventArgs e)
@@ -106,19 +195,54 @@ namespace MCServerInstaller
                 MessageBox.Show("You need to select something!");
                 return;
             }
+            selectedSoftware = SoftwareListBox.SelectedItem.ToString();
+            selectedVersion = AvailableListBox.SelectedItem.ToString();
+            InstallWindow installWindow = new InstallWindow();
+            installWindow.ShowDialog();
+            return;
             Name nameWindow = new Name();
             nameWindow.ShowDialog();
-            using (var client = new WebClient())
+            if (SoftwareListBox.SelectedItem.ToString() == "Bukkit" || SoftwareListBox.SelectedItem.ToString() == "Spigot")
             {
-                client.DownloadFile(fileUrls + AvailableListBox.SelectedItem, name + ".zip");
+                Directory.CreateDirectory("build");
+                using (var client = new WebClient())
+                {
+                    client.DownloadFile(fileUrls + "BuildTools.jar", "build\\BuildTools.jar");
+                }
+                File.Create("build\\build.bat");
+                using (StreamWriter sw = new StreamWriter("build\\build.bat"))
+                {
+                    sw.WriteLine(@"cd /d " + startupPath + @"\build");
+                    sw.WriteLine("java -jar BuildTools.jar --rev " + InstalledListBox.SelectedItem);
+                }
+                Process pro = new Process();
+                pro.StartInfo.FileName ="build\\BuildTools.jar";
+                pro.Start();
+                pro.WaitForExit();
             }
-            if (Directory.Exists("Temp\\" + name))
+            else
             {
-                Directory.Delete("Temp\\" + name);
+                using (var client = new WebClient())
+                {
+                    client.DownloadFile(fileUrls + AvailableListBox.SelectedItem, name + ".zip");
+                }
+                if (Directory.Exists("Temp\\" + name))
+                {
+                    Directory.Delete("Temp\\" + name);
+                }
+                ZipFile.ExtractToDirectory(name + ".zip", "Temp");
+                File.Delete(name + ".zip");
+                if (Directory.Exists("Temp\\" + System.IO.Path.ChangeExtension(AvailableListBox.SelectedItem.ToString(), null)))
+                {
+                    //good
+                }
+                else
+                {
+                    Directory.CreateDirectory("Temp\\" + System.IO.Path.ChangeExtension(AvailableListBox.SelectedItem.ToString(), null));
+                    File.Move("Temp\\" + System.IO.Path.ChangeExtension(AvailableListBox.SelectedItem.ToString(), null) + ".jar", "Temp\\" + System.IO.Path.ChangeExtension(AvailableListBox.SelectedItem.ToString(), null) + "\\" + AvailableListBox.SelectedItem.ToString());
+                }
+                Directory.Move("Temp\\" + System.IO.Path.ChangeExtension(AvailableListBox.SelectedItem.ToString(), null), "Servers\\" + name);
             }
-            ZipFile.ExtractToDirectory(name + ".zip", "Temp");
-            File.Delete(name + ".zip");
-            Directory.Move("Temp\\" + System.IO.Path.ChangeExtension(AvailableListBox.SelectedItem.ToString(), null), "Servers\\" + name);
             string folderPath = "Servers\\" + name;
             using (StreamWriter sw = new StreamWriter("Servers\\" + name + "\\StartServer.bat"))
             {
@@ -141,7 +265,67 @@ namespace MCServerInstaller
                         }
                     }
                 }
-                sw.WriteLine(@"cd /d D:\VisualStudioRepos\MCServerInstaller\MCServerInstaller\bin\Debug\Servers\" + name);
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("craftbukkit"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("fabric"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("Magma"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("Mohist"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("paper"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("spigot"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                sw.WriteLine(@"cd /d " + startupPath + @"\Servers\" + name);
                 sw.WriteLine("java -Xmx2048M -Xms2048M -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true nogui");
                 sw.Close();
             }
@@ -152,7 +336,15 @@ namespace MCServerInstaller
             }
             await Task.Delay(1000);
             string[] arrLine = File.ReadAllLines("Servers\\" + name + "\\eula.txt");
-            arrLine[2] = "eula=true";
+            int i = 0;
+            foreach (string line in arrLine)
+            {
+                if (line.Contains("eula"))
+                {
+                    arrLine[i] = "eula=true";
+                }
+                i++;
+            }
             File.WriteAllLines("Servers\\" + name + "\\eula.txt", arrLine);
             Process p = new Process();
             p.StartInfo.FileName = "Servers\\" + name + "\\StartServer.bat";

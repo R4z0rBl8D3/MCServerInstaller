@@ -1,0 +1,14 @@
+﻿<Window x:Class="MCServerInstaller.InstallWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MCServerInstaller"
+        mc:Ignorable="d"
+        Title="Installing Server" Height="110" Width="300">
+    <Grid>
+        <Label Content="Installing Server" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+        <Label x:Name="StatusTxt" Content="Label" HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.539,0.75" FontSize="10" Width="292"/>
+
+    </Grid>
+</Window>

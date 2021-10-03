@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Toolkit.Uwp.Notifications;
+using System.Diagnostics;
+using System.Net;
+using System.IO.Compression;
 
 namespace MCServerInstaller
 {
@@ -28,6 +31,60 @@ namespace MCServerInstaller
         {
             InitializeComponent();
             Loaded += onLoad;
+            ModsListBox.Drop += modDrop;
+            DatapacksListBox.Drop += datapackDrop;
+            PluginsListBox.Drop += pluginDrop;
+        }
+
+        private void modDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+            {
+                if (File.Exists(file))
+                {
+                    MessageBox.Show(file + " already exists! Skipping");
+                }
+                else
+                {
+                    ModsListBox.Items.Add(file.Split('\\')[file.Split('\\').Length - 1]);
+                    File.Copy(file, MainWindow.editPath + "\\plugins\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                }
+            }
+        }
+
+        private void datapackDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+            {
+                if (File.Exists(file))
+                {
+                    MessageBox.Show(file + " already exists! Skipping");
+                }
+                else
+                {
+                    DatapacksListBox.Items.Add(file.Split('\\')[file.Split('\\').Length - 1]);
+                    File.Copy(file, MainWindow.editPath + "\\plugins\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                }
+            }
+        }
+
+        private void pluginDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+            {
+                if (File.Exists(file))
+                {
+                    MessageBox.Show(file + " already exists! Skipping");
+                }
+                else
+                {
+                    PluginsListBox.Items.Add(file.Split('\\')[file.Split('\\').Length - 1]);
+                    File.Copy(file, MainWindow.editPath + "\\plugins\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                }
+            }
         }
 
         private void load()
@@ -38,6 +95,14 @@ namespace MCServerInstaller
                 MessageBox.Show("Failed to load!");
                 this.Hide();
                 return;
+            }
+            if (Directory.Exists(MainWindow.editPath + "\\Java"))
+            {
+                Java8.IsChecked = true;
+            }
+            else
+            {
+                Java8.IsChecked = false;
             }
             StatusTxt.Content = "Loading properties...";
             properties.Clear();
@@ -180,11 +245,22 @@ namespace MCServerInstaller
                 }
                 StatusTxt.Content = "";
             }
+            if (!File.Exists(MainWindow.editPath + "\\StartServer.bat"))
+            {
+                MessageBox.Show("Server was not set up properly");
+            }
             using (StreamReader sr = new StreamReader(MainWindow.editPath + "\\StartServer.bat"))
             {
                 sr.ReadLine();
                 string line = sr.ReadLine();
-                MemoryBox.Text = line.Split(' ')[1].Split('x')[1];
+                try
+                {
+                  MemoryBox.Text = line.Split(' ')[1].Split('x')[1];
+                }
+                catch
+                {
+                    MessageBox.Show("Server was not set up properly");
+                }
             }
             using (StreamReader sr = new StreamReader(MainWindow.editPath + "\\StartServer.bat"))
             {
@@ -210,25 +286,47 @@ namespace MCServerInstaller
                     ModsListBox.Items.Add(mod.Split('\\')[mod.Split('\\').Length - 1]);
                 }
             }
-            if (Directory.Exists(MainWindow.editPath + "\\scripts"))
+            if (Directory.Exists(MainWindow.editPath + "\\plugins"))
             {
-                StatusTxt.Content = "Loading scripts...";
-                ScriptsListBox.Items.Clear();
-                string[] scripts = Directory.GetFiles(MainWindow.editPath + "\\scripts");
-                foreach (string script in scripts)
+                StatusTxt.Content = "Loading plugins...";
+                PluginsListBox.Visibility = Visibility.Visible;
+                PluginsDeleteBtn.Visibility = Visibility.Visible;
+                NoPluginsLbl.Visibility = Visibility.Collapsed;
+                NoPluginsLbl2.Visibility = Visibility.Collapsed;
+                PluginsListBox.Items.Clear();
+                string[] plugins = Directory.GetFiles(MainWindow.editPath + "\\plugins");
+                foreach (string plugin in plugins)
                 {
-                    ScriptsListBox.Items.Add(script.Split('\\')[script.Split('\\').Length - 1]);
+                    PluginsListBox.Items.Add(plugin.Split('\\')[plugin.Split('\\').Length - 1]);
                 }
             }
-            if (Directory.Exists(MainWindow.editPath + "\\structures"))
+            else
             {
-                StatusTxt.Content = "Loading structures...";
-                StructuresListBox.Items.Clear();
-                string[] structures = Directory.GetFiles(MainWindow.editPath + "\\structures");
-                foreach (string structure in structures)
+                PluginsListBox.Visibility = Visibility.Collapsed;
+                PluginsDeleteBtn.Visibility = Visibility.Collapsed;
+                NoPluginsLbl.Visibility = Visibility.Visible;
+                NoPluginsLbl2.Visibility = Visibility.Visible;
+            }
+            if (Directory.Exists(MainWindow.editPath + "\\world\\datapacks"))
+            {
+                StatusTxt.Content = "Loading datapacks...";
+                DatapacksListBox.Visibility = Visibility.Visible;
+                DatapacksDeleteBtn.Visibility = Visibility.Visible;
+                NoDatapacksLbl.Visibility = Visibility.Collapsed;
+                NoDatapacksLbl2.Visibility = Visibility.Collapsed;
+                DatapacksListBox.Items.Clear();
+                string[] datapacks = Directory.GetFiles(MainWindow.editPath + "\\world\\datapacks");
+                foreach (string datapack in datapacks)
                 {
-                    StructuresListBox.Items.Add(structure.Split('\\')[structure.Split('\\').Length - 1]);
+                    DatapacksListBox.Items.Add(datapack.Split('\\')[datapack.Split('\\').Length - 1]);
                 }
+            }
+            else
+            {
+                DatapacksListBox.Visibility = Visibility.Collapsed;
+                DatapacksDeleteBtn.Visibility = Visibility.Collapsed;
+                NoDatapacksLbl.Visibility = Visibility.Visible;
+                NoDatapacksLbl2.Visibility = Visibility.Visible;
             }
         }
 
@@ -245,10 +343,6 @@ namespace MCServerInstaller
         private void save()
         {
             int i = 0;
-            new ToastContentBuilder()
-                .AddText("Minecraft Server Installer")
-                .AddText("Saving properties...")
-                .Show();
             saveProperties = new string[properties.Count()];
             properties.CopyTo(saveProperties);
             foreach (string property in properties)
@@ -312,7 +406,6 @@ namespace MCServerInstaller
                 }
                 i++;
             }
-            MessageBox.Show(string.Join(",", saveProperties));
             File.WriteAllLines(MainWindow.editPath + "\\server.properties", saveProperties);
             string serverPath = null;
             using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
@@ -336,18 +429,68 @@ namespace MCServerInstaller
                     }
                 }
             }
-            string startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+            string startup = null;
+            if (Java8.IsChecked == true)
+            {
+                startup = @"Java\bin\java.exe -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+            }
+            else
+            {
+                startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+            }
             if (GuiCheckbox.IsChecked == false)
             {
                 startup = startup + " nogui";
             }
-            MessageBox.Show(startup);
             File.Delete(MainWindow.editPath + "\\StartServer.bat");
             File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
             using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
             {
-                sw.WriteLine(@"cd /d D:\VisualStudioRepos\MCServerInstaller\MCServerInstaller\bin\Debug\" + MainWindow.editPath);
+                sw.WriteLine(@"cd /d " + MainWindow.startupPath +  "\\" + MainWindow.editPath);
                 sw.WriteLine(startup);
+            }
+            if (Java8.IsChecked == false && Directory.Exists(MainWindow.editPath + "\\Java"))
+            {
+                try
+                {
+                    Directory.Delete(MainWindow.editPath + "\\Java", true);
+                    startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+                    File.Delete(MainWindow.editPath + "\\StartServer.bat");
+                    File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
+                    using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
+                    {
+                        sw.WriteLine(@"cd /d " + MainWindow.startupPath + "\\" + MainWindow.editPath);
+                        sw.WriteLine(startup);
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            }
+            if (Java8.IsChecked == true && !Directory.Exists(MainWindow.editPath + "\\Java"))
+            {
+                try
+                {
+                    using (WebClient wc = new WebClient())
+                    {
+                        wc.DownloadFile(new System.Uri(MainWindow.fileUrls + "Java8.zip"), MainWindow.editPath + "\\Java.zip");
+                    }
+                    ZipFile.ExtractToDirectory(MainWindow.editPath + "\\Java.zip", MainWindow.editPath + "\\Java");
+                    File.Delete(MainWindow.editPath + "\\Java.zip");
+                }
+                catch
+                {
+                    MessageBox.Show("Could not download Java 8!");
+                    startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+                    File.Delete(MainWindow.editPath + "\\StartServer.bat");
+                    File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
+                    using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
+                    {
+                        sw.WriteLine(@"cd /d " + MainWindow.startupPath + "\\" + MainWindow.editPath);
+                        sw.WriteLine(startup);
+                    }
+                }
             }
             new ToastContentBuilder()
                  .AddText("Minecraft Server Installer")
@@ -358,32 +501,48 @@ namespace MCServerInstaller
 
         private void ModsDeleteBtn_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void ScriptsDeleteBtn_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void StructuresDeleteBtn_Click(object sender, RoutedEventArgs e)
-        {
-
+            List<string> selectedList = new List<string>();
+            foreach (var item in ModsListBox.SelectedItems)
+            {
+                selectedList.Add(item.ToString());
+            }
+            if (selectedList.Count() == 0) { return; }
+            MessageBoxResult messageResult = MessageBox.Show(string.Join(Environment.NewLine, selectedList), "Are you sure you want to delete", MessageBoxButton.YesNo);
+            if (messageResult == MessageBoxResult.Yes)
+            {
+                foreach (var item in ModsListBox.SelectedItems)
+                {
+                    File.Delete(MainWindow.editPath + "\\mods\\" + item.ToString());
+                }
+                ModsListBox.Items.Clear();
+                string[] mods = Directory.GetFiles(MainWindow.editPath + "\\mods");
+                foreach (string mod in mods)
+                {
+                    ModsListBox.Items.Add(mod.Split('\\')[mod.Split('\\').Length - 1]);
+                }
+            }
+            else if (messageResult == MessageBoxResult.No)
+            {
+                return;
+            }
+            //MessageBox.Show("Are you sure you want to delete the selected items: " + Environment.NewLine +
+                    //string.Join(Environment.NewLine, selectedList));
         }
 
         private void PropertiesBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            Process.Start("notepad.exe", MainWindow.editPath + "\\server.properties");
         }
 
         private void DoneBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            save();
+            this.Hide();
         }
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Hide();
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
@@ -393,7 +552,63 @@ namespace MCServerInstaller
 
         private void OpenBtn_Click(object sender, RoutedEventArgs e)
         {
+            Process.Start("explorer.exe", MainWindow.editPath);
+        }
 
+        private void DatapacksDeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> selectedList = new List<string>();
+            foreach (var item in ModsListBox.SelectedItems)
+            {
+                selectedList.Add(item.ToString());
+            }
+            if (selectedList.Count() == 0) { return; }
+            MessageBoxResult messageResult = MessageBox.Show(string.Join(Environment.NewLine, selectedList), "Are you sure you want to delete", MessageBoxButton.YesNo);
+            if (messageResult == MessageBoxResult.Yes)
+            {
+                foreach (var item in ModsListBox.SelectedItems)
+                {
+                    File.Delete(MainWindow.editPath + "\\world\\datapacks\\" + item.ToString());
+                }
+                ModsListBox.Items.Clear();
+                string[] datapacks = Directory.GetFiles(MainWindow.editPath + "\\world\\datapacks");
+                foreach (string datapack in datapacks)
+                {
+                    DatapacksListBox.Items.Add(datapack.Split('\\')[datapack.Split('\\').Length - 1]);
+                }
+            }
+            else if (messageResult == MessageBoxResult.No)
+            {
+                return;
+            }
+        }
+
+        private void PluginsDeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> selectedList = new List<string>();
+            foreach (var item in ModsListBox.SelectedItems)
+            {
+                selectedList.Add(item.ToString());
+            }
+            if (selectedList.Count() == 0) { return; }
+            MessageBoxResult messageResult = MessageBox.Show(string.Join(Environment.NewLine, selectedList), "Are you sure you want to delete", MessageBoxButton.YesNo);
+            if (messageResult == MessageBoxResult.Yes)
+            {
+                foreach (var item in ModsListBox.SelectedItems)
+                {
+                    File.Delete(MainWindow.editPath + "\\plugins\\" + item.ToString());
+                }
+                ModsListBox.Items.Clear();
+                string[] plugins = Directory.GetFiles(MainWindow.editPath + "\\plugins");
+                foreach (string plugin in plugins)
+                {
+                    PluginsListBox.Items.Add(plugin.Split('\\')[plugin.Split('\\').Length - 1]);
+                }
+            }
+            else if (messageResult == MessageBoxResult.No)
+            {
+                return;
+            }
         }
     }
 }

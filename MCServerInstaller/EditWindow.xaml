@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MCServerInstaller"
         mc:Ignorable="d"
-        Title="EditWindow" Height="450" Width="815">
+        Title="Edit" Height="450" Width="815">
     <Grid>
         <Label Content="Edit" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30"/>
         <CheckBox x:Name="GuiCheckbox" Content="Gui" HorizontalAlignment="Left" Margin="10,371,0,0" VerticalAlignment="Top" IsChecked="true"/>
@@ -13,19 +13,17 @@
         <TextBox x:Name="MemoryBox" HorizontalAlignment="Left" Height="20" Margin="133,369,0,0" TextWrapping="Wrap" Text="4G" VerticalAlignment="Top" Width="59"/>
         <Label Content="Startup" HorizontalAlignment="Left" Margin="0,334,0,0" VerticalAlignment="Top" FontSize="20"/>
         <Label Content="Mods" HorizontalAlignment="Left" Margin="0,50,0,0" VerticalAlignment="Top" FontSize="20"/>
-        <ListBox x:Name="ModsListBox" HorizontalAlignment="Left" Height="247" Margin="0,87,0,0" VerticalAlignment="Top" Width="250"/>
+        <ListBox x:Name="ModsListBox" HorizontalAlignment="Left" Height="247" Margin="0,87,0,0" VerticalAlignment="Top" Width="250" AllowDrop="True" SelectionMode="Extended"/>
         <Label Content="(Drag and drop)" HorizontalAlignment="Left" Margin="60,61,0,0" VerticalAlignment="Top"/>
         <Button x:Name="ModsDeleteBtn" Content="Delete" HorizontalAlignment="Left" Margin="175,67,0,0" VerticalAlignment="Top" Width="75" AllowDrop="True" Click="ModsDeleteBtn_Click"/>
         <Button x:Name="DoneBtn" Content="Done" HorizontalAlignment="Left" Margin="722,309,0,0" VerticalAlignment="Top" Width="75" Click="DoneBtn_Click"/>
         <Button x:Name="OpenBtn" Content="Open folder" HorizontalAlignment="Left" Margin="722,369,0,0" VerticalAlignment="Top" Width="75" Click="OpenBtn_Click"/>
         <Button x:Name="SaveBtn" Content="Save" HorizontalAlignment="Left" Margin="722,349,0,0" VerticalAlignment="Top" Width="75" Click="SaveBtn_Click"/>
         <Button x:Name="CancelBtn" Content="Cancel" HorizontalAlignment="Left" Margin="722,329,0,0" VerticalAlignment="Top" Width="75" Click="CancelBtn_Click"/>
-        <Label Content="Scripts" HorizontalAlignment="Left" Margin="251,50,0,0" VerticalAlignment="Top" FontSize="20"/>
-        <ListBox x:Name="ScriptsListBox" HorizontalAlignment="Left" Height="80" Margin="250,87,0,0" VerticalAlignment="Top" Width="250" AllowDrop="true"/>
-        <Button x:Name="ScriptsDeleteBtn" Content="Delete" HorizontalAlignment="Left" Margin="425,67,0,0" VerticalAlignment="Top" Width="75" Click="ScriptsDeleteBtn_Click"/>
-        <Label Content="Structures" HorizontalAlignment="Left" Margin="250,167,0,0" VerticalAlignment="Top" FontSize="20"/>
-        <ListBox x:Name="StructuresListBox" HorizontalAlignment="Left" Height="130" Margin="250,204,0,0" VerticalAlignment="Top" Width="250" AllowDrop="true"/>
-        <Button x:Name="StructuresDeleteBtn" Content="Delete" HorizontalAlignment="Left" Margin="425,184,0,0" VerticalAlignment="Top" Width="75" Click="StructuresDeleteBtn_Click"/>
+        <Label Content="Datapacks" HorizontalAlignment="Left" Margin="251,50,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <ListBox x:Name="DatapacksListBox" HorizontalAlignment="Left" Height="80" Margin="250,87,0,0" VerticalAlignment="Top" Width="250" AllowDrop="true" SelectionMode="Extended"/>
+        <Label Content="Plugins" HorizontalAlignment="Left" Margin="250,167,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <ListBox x:Name="PluginsListBox" HorizontalAlignment="Left" Height="130" Margin="250,204,0,0" VerticalAlignment="Top" Width="250" AllowDrop="true" SelectionMode="Extended" Visibility="Visible"/>
         <Label Content="Server Properties" HorizontalAlignment="Left" Margin="500,50,0,0" VerticalAlignment="Top" FontSize="20"/>
         <CheckBox x:Name="AllowFlightCheckbox" Content="Allow Flight" HorizontalAlignment="Left" Margin="500,87,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="AllowNetherCheckbox" Content="Allow Nether" HorizontalAlignment="Left" Margin="500,107,0,0" VerticalAlignment="Top" IsChecked="true"/>
@@ -53,6 +51,13 @@
         <StatusBar HorizontalAlignment="Left" Height="23" Margin="0,386,0,0" VerticalAlignment="Top" Width="797">
             <Label x:Name="StatusTxt" Content="Status: " HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" FontSize="10"/>
         </StatusBar>
+        <Button x:Name="DatapacksDeleteBtn" Content="Delete" HorizontalAlignment="Left" Margin="425,67,0,0" VerticalAlignment="Top" Width="75" Click="DatapacksDeleteBtn_Click"/>
+        <Button x:Name="PluginsDeleteBtn" Content="Delete" HorizontalAlignment="Left" Margin="425,184,0,0" VerticalAlignment="Top" Width="75" Click="PluginsDeleteBtn_Click"/>
+        <Label x:Name="NoPluginsLbl" Content="Plugins not supported" HorizontalAlignment="Left" Margin="299,231,0,0" VerticalAlignment="Top" FontSize="15"/>
+        <Label x:Name="NoPluginsLbl2" Content="Plugins not supported by this software" HorizontalAlignment="Left" Margin="288,257,0,0" VerticalAlignment="Top" Height="24" Width="180" FontSize="10"/>
+        <Label x:Name="NoDatapacksLbl" Content="Datapacks not supported" HorizontalAlignment="Left" Margin="290,98,0,0" VerticalAlignment="Top" FontSize="15"/>
+        <Label x:Name="NoDatapacksLbl2" Content="Datapacks not supported by this version" HorizontalAlignment="Left" Margin="283,123,0,0" VerticalAlignment="Top" Height="24" Width="193" FontSize="10"/>
+        <CheckBox x:Name="Java8" Content="Install Java 8" HorizontalAlignment="Left" Margin="197,370,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

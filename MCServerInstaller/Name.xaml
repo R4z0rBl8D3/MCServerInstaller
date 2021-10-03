@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MCServerInstaller"
         mc:Ignorable="d"
-        Title="Name" Height="150" Width="300">
+        Title="Enter Name" Height="150" Width="300">
     <Grid>
         <Label Content="Enter a name" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
         <TextBox x:Name="NameBox" HorizontalAlignment="Left" Height="23" Margin="0,53,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="282"/>
