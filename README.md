@@ -1,4 +1,4 @@
 # MCServerInstaller
 This app can create a server locally.
 
-# HowToUse
+# How to use it
