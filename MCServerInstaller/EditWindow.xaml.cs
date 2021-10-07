@@ -96,13 +96,40 @@ namespace MCServerInstaller
                 this.Hide();
                 return;
             }
-            if (Directory.Exists(MainWindow.editPath + "\\Java"))
+            if (File.Exists(MainWindow.editPath + "\\Java.txt"))
             {
-                Java8.IsChecked = true;
+                using (StreamReader sr = new StreamReader(MainWindow.editPath + "\\Java.txt"))
+                {
+                    string version = sr.ReadLine();
+                    if (version == "8")
+                    {
+                        Java8.IsChecked = true;
+                    }
+                    else
+                    {
+                        if (version == "11")
+                        {
+                            Java11.IsChecked = true;
+                        }
+                        else
+                        {
+                            if (version == "16")
+                            {
+                                Java16.IsChecked = true;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Failed to load!");
+                                this.Hide();
+                                return;
+                            }
+                        }
+                    }
+                }
             }
             else
             {
-                Java8.IsChecked = false;
+                NoJava.IsChecked = true;
             }
             StatusTxt.Content = "Loading properties...";
             properties.Clear();
@@ -430,7 +457,7 @@ namespace MCServerInstaller
                 }
             }
             string startup = null;
-            if (Java8.IsChecked == true)
+            if (NoJava.IsChecked == false)
             {
                 startup = @"Java\bin\java.exe -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
             }
@@ -449,10 +476,11 @@ namespace MCServerInstaller
                 sw.WriteLine(@"cd /d " + MainWindow.startupPath +  "\\" + MainWindow.editPath);
                 sw.WriteLine(startup);
             }
-            if (Java8.IsChecked == false && Directory.Exists(MainWindow.editPath + "\\Java"))
+            if (NoJava.IsChecked == true && Directory.Exists(MainWindow.editPath + "\\Java"))
             {
                 try
                 {
+                    File.Delete(MainWindow.editPath + "\\Java.txt");
                     Directory.Delete(MainWindow.editPath + "\\Java", true);
                     startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
                     File.Delete(MainWindow.editPath + "\\StartServer.bat");
@@ -468,6 +496,28 @@ namespace MCServerInstaller
                     MessageBox.Show(e.Message);
                 }
             }
+            if (File.Exists(MainWindow.editPath + "\\Java.txt"))
+            {
+                using (StreamReader sr = new StreamReader(MainWindow.editPath + "\\Java.txt"))
+                {
+                    string version = sr.ReadLine();
+                    if (Java8.IsChecked == true && version != "8")
+                    {
+                        Directory.Delete(MainWindow.editPath + "\\Java");
+                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                    }
+                    if (Java11.IsChecked == true && version != "11")
+                    {
+                        Directory.Delete(MainWindow.editPath + "\\Java");
+                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                    }
+                    if (Java16.IsChecked == true && version != "16")
+                    {
+                        Directory.Delete(MainWindow.editPath + "\\Java");
+                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                    }
+                }
+            }
             if (Java8.IsChecked == true && !Directory.Exists(MainWindow.editPath + "\\Java"))
             {
                 try
@@ -478,6 +528,11 @@ namespace MCServerInstaller
                     }
                     ZipFile.ExtractToDirectory(MainWindow.editPath + "\\Java.zip", MainWindow.editPath + "\\Java");
                     File.Delete(MainWindow.editPath + "\\Java.zip");
+                    File.Create(MainWindow.editPath + "\\Java.txt");
+                    using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\Java.txt"))
+                    {
+                        sw.WriteLine("8");
+                    }
                 }
                 catch
                 {
@@ -489,6 +544,76 @@ namespace MCServerInstaller
                     {
                         sw.WriteLine(@"cd /d " + MainWindow.startupPath + "\\" + MainWindow.editPath);
                         sw.WriteLine(startup);
+                    }
+                    if (File.Exists(MainWindow.editPath + "\\Java.txt"))
+                    {
+                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                    }
+                }
+            }
+            if (Java11.IsChecked == true && !Directory.Exists(MainWindow.editPath + "\\Java"))
+            {
+                try
+                {
+                    using (WebClient wc = new WebClient())
+                    {
+                        wc.DownloadFile(new System.Uri(MainWindow.fileUrls + "Java11.zip"), MainWindow.editPath + "\\Java.zip");
+                    }
+                    ZipFile.ExtractToDirectory(MainWindow.editPath + "\\Java.zip", MainWindow.editPath + "\\Java");
+                    File.Delete(MainWindow.editPath + "\\Java.zip");
+                    File.Create(MainWindow.editPath + "\\Java.txt");
+                    using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\Java.txt"))
+                    {
+                        sw.WriteLine("11");
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Could not download Java 11!");
+                    startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+                    File.Delete(MainWindow.editPath + "\\StartServer.bat");
+                    File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
+                    using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
+                    {
+                        sw.WriteLine(@"cd /d " + MainWindow.startupPath + "\\" + MainWindow.editPath);
+                        sw.WriteLine(startup);
+                    }
+                    if (File.Exists(MainWindow.editPath + "\\Java.txt"))
+                    {
+                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                    }
+                }
+            }
+            if (Java16.IsChecked == true && !Directory.Exists(MainWindow.editPath + "\\Java"))
+            {
+                try
+                {
+                    using (WebClient wc = new WebClient())
+                    {
+                        wc.DownloadFile(new System.Uri(MainWindow.fileUrls + "Java16.zip"), MainWindow.editPath + "\\Java.zip");
+                    }
+                    ZipFile.ExtractToDirectory(MainWindow.editPath + "\\Java.zip", MainWindow.editPath + "\\Java");
+                    File.Delete(MainWindow.editPath + "\\Java.zip");
+                    File.Create(MainWindow.editPath + "\\Java.txt");
+                    using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\Java.txt"))
+                    {
+                        sw.WriteLine("16");
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Could not download Java 16!");
+                    startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+                    File.Delete(MainWindow.editPath + "\\StartServer.bat");
+                    File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
+                    using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
+                    {
+                        sw.WriteLine(@"cd /d " + MainWindow.startupPath + "\\" + MainWindow.editPath);
+                        sw.WriteLine(startup);
+                    }
+                    if (File.Exists(MainWindow.editPath + "\\Java.txt"))
+                    {
+                        File.Delete(MainWindow.editPath + "\\Java.txt");
                     }
                 }
             }

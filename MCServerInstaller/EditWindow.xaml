@@ -43,10 +43,10 @@
         <TextBox x:Name="ServerPortBox" HorizontalAlignment="Left" Height="23" Margin="569,304,0,0" TextWrapping="Wrap" Text="25565" VerticalAlignment="Top" Width="91"/>
         <Label Content="MOTD" HorizontalAlignment="Left" Margin="498,326,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="MOTDBox" HorizontalAlignment="Left" Height="23" Margin="540,330,0,0" TextWrapping="Wrap" Text="A Minecraft Server" VerticalAlignment="Top" Width="120"/>
-        <CheckBox x:Name="SpawnAnimalsCheckbox" Content="Spawn Animals" HorizontalAlignment="Left" Margin="500,356,0,0" VerticalAlignment="Top" IsChecked="true"/>
-        <CheckBox x:Name="SpawnMonstersCheckbox" Content="Spawn Monsters" HorizontalAlignment="Left" Margin="387,356,0,0" VerticalAlignment="Top" IsChecked="true"/>
+        <CheckBox x:Name="SpawnAnimalsCheckbox" Content="Spawn Animals" HorizontalAlignment="Left" Margin="560,354,0,0" VerticalAlignment="Top" IsChecked="true"/>
+        <CheckBox x:Name="SpawnMonstersCheckbox" Content="Spawn Monsters" HorizontalAlignment="Left" Margin="447,357,0,0" VerticalAlignment="Top" IsChecked="true"/>
         <CheckBox x:Name="SpawnNPCsCheckbox" Content="Spawn NPCs" HorizontalAlignment="Left" Margin="411,337,0,0" VerticalAlignment="Top" IsChecked="true"/>
-        <CheckBox x:Name="EnableCommandBlocksCheckbox" Content="Enable Command Blocks" HorizontalAlignment="Left" Margin="256,337,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="EnableCommandBlocksCheckbox" Content="Enable Command Blocks" HorizontalAlignment="Left" Margin="510,372,0,0" VerticalAlignment="Top"/>
         <Button x:Name="PropertiesBtn" Content="Open file" HorizontalAlignment="Left" Margin="665,61,0,0" VerticalAlignment="Top" Width="75" Click="PropertiesBtn_Click"/>
         <StatusBar HorizontalAlignment="Left" Height="23" Margin="0,386,0,0" VerticalAlignment="Top" Width="797">
             <Label x:Name="StatusTxt" Content="Status: " HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" FontSize="10"/>
@@ -57,7 +57,11 @@
         <Label x:Name="NoPluginsLbl2" Content="Plugins not supported by this software" HorizontalAlignment="Left" Margin="288,257,0,0" VerticalAlignment="Top" Height="24" Width="180" FontSize="10"/>
         <Label x:Name="NoDatapacksLbl" Content="Datapacks not supported" HorizontalAlignment="Left" Margin="290,98,0,0" VerticalAlignment="Top" FontSize="15"/>
         <Label x:Name="NoDatapacksLbl2" Content="Datapacks not supported by this version" HorizontalAlignment="Left" Margin="283,123,0,0" VerticalAlignment="Top" Height="24" Width="193" FontSize="10"/>
-        <CheckBox x:Name="Java8" Content="Install Java 8" HorizontalAlignment="Left" Margin="197,370,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="NoJava" Content="Use installed Java" HorizontalAlignment="Left" Margin="198,355,0,0" VerticalAlignment="Top" IsChecked="true"/>
+        <RadioButton x:Name="Java8" Content="Install Java 8" HorizontalAlignment="Left" Margin="315,355,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="Java11" Content="Install Java 11" HorizontalAlignment="Left" Margin="198,370,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="Java16" Content="Install Java 16" HorizontalAlignment="Left" Margin="315,371,0,0" VerticalAlignment="Top"/>
+        <Label Content="Java version" HorizontalAlignment="Left" Margin="194,326,0,0" VerticalAlignment="Top" FontSize="20"/>
 
     </Grid>
 </Window>

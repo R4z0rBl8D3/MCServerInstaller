@@ -71,10 +71,6 @@ namespace MCServerInstaller
 
         private async void onLoad(object sender, RoutedEventArgs e)
         {
-            if (getJavaVersion().Split('_')[0] != "1.8.0")
-            {
-                MessageBox.Show("Java 8 is not installed, Java 8 is recommended this app");
-            }
             if (File.Exists("versions.txt"))
             {
                 File.Delete("versions.txt");
