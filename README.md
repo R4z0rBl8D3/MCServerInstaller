@@ -26,3 +26,11 @@ This is where you can edit some properties of the server, I left some out though
 ![10](https://user-images.githubusercontent.com/88277260/136707309-f1467a8b-06ab-4ee8-ae22-1d5eb0438ae3.png)
 I added an experimental feature to import the mods and other stuff from Curseforge instances.
 ![11](https://user-images.githubusercontent.com/88277260/136707330-60c972da-f57d-4a38-a0e3-4d18021261ca.png)
+This is what the import window looks like.
+![12](https://user-images.githubusercontent.com/88277260/136707365-422d7a50-7d5e-4e74-9a21-15688ba79ca6.png)
+This is where you can find the modpacks.
+![13](https://user-images.githubusercontent.com/88277260/136707387-57713180-88d7-4751-b1b9-00f3d0535e5a.png)
+If you moved where Curseforge puts its instances then put in the directory in the text box.
+![14](https://user-images.githubusercontent.com/88277260/136707436-7f7f775e-9e66-4b3f-8ad6-63650a9b58c6.png)
+You can save and exit by clicking Done, canceling using Cancel, saving using Save and opening where the server is stored by pressing Open folder.
+![16](https://user-images.githubusercontent.com/88277260/136707484-157fe1a5-08ec-4cbf-a742-c125354e990d.png)
