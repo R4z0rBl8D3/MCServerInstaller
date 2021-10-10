@@ -77,7 +77,7 @@ namespace MCServerInstaller
                 Directory.CreateDirectory("Servers\\" + MainWindow.name);
                 foreach (string file in Directory.GetFiles("build"))
                 {
-                    if (file.Contains("spigot"))
+                    if (file.Contains("spigot") && file.Contains(".jar"))
                     {
                         File.Move(file, "Servers\\" + MainWindow.name + "\\" + file.Split('\\')[file.Split('\\').Length - 1]);
                         File.Create("Servers\\" + MainWindow.name + "\\StartServer.bat").Close();
@@ -87,7 +87,7 @@ namespace MCServerInstaller
                             sw.WriteLine("java -Xmx2048M -Xms2048M -jar " + file.Split('\\')[file.Split('\\').Length - 1] + " nogui");
                         }
                     }
-                    if (file.Contains("craftbukkit"))
+                    if (file.Contains("craftbukkit") && file.Contains(".jar"))
                     {
                         File.Delete(file);
                     }
@@ -116,7 +116,7 @@ namespace MCServerInstaller
                 Directory.CreateDirectory("Servers\\" + MainWindow.name);
                 foreach (string file in Directory.GetFiles("build"))
                 {
-                    if (file.Contains("craftbukkit"))
+                    if (file.Contains("craftbukkit") && file.Contains(".jar"))
                     {
                         File.Move(file, "Servers\\" + MainWindow.name + "\\" + file.Split('\\')[file.Split('\\').Length - 1]);
                         File.Create("Servers\\" + MainWindow.name + "\\StartServer.bat").Close();
@@ -126,7 +126,7 @@ namespace MCServerInstaller
                             sw.WriteLine("java -Xmx2048M -Xms2048M -jar " + file.Split('\\')[file.Split('\\').Length - 1] + " nogui");
                         }
                     }
-                    if (file.Contains("spigot"))
+                    if (file.Contains("spigot") && file.Contains(".jar"))
                     {
                         File.Delete(file);
                     }
@@ -149,7 +149,7 @@ namespace MCServerInstaller
                     string server = null;
                     foreach (string file in Directory.GetFiles("Servers\\" + MainWindow.name))
                     {
-                        if (file.Split('\\')[file.Split('\\').Length - 1].Contains("forge") || file.Split('\\')[file.Split('\\').Length - 1].Contains("fabric") || file.Split('\\')[file.Split('\\').Length - 1].Contains("paper") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Magma") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Mohist") || file.Split('\\')[file.Split('\\').Length - 1].Contains("mohist"))
+                        if (file.Split('\\')[file.Split('\\').Length - 1].Contains("forge") || file.Split('\\')[file.Split('\\').Length - 1].Contains("fabric") || file.Split('\\')[file.Split('\\').Length - 1].Contains("paper") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Magma") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Mohist") || file.Split('\\')[file.Split('\\').Length - 1].Contains("mohist") && file.Contains(".jar"))
                         {
                             server = file.Split('\\')[file.Split('\\').Length - 1];
                         }

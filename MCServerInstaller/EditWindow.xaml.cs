@@ -16,17 +16,20 @@ using Microsoft.Toolkit.Uwp.Notifications;
 using System.Diagnostics;
 using System.Net;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MCServerInstaller
 {
     /// <summary>
     /// Interaction logic for EditWindow.xaml
     /// </summary>
+    /// 
     public partial class EditWindow : Window
     {
         public static List<string> properties = new List<string>();
         public static string[] saveProperties = { };
-        
+      
         public EditWindow()
         {
             InitializeComponent();
@@ -282,7 +285,7 @@ namespace MCServerInstaller
                 string line = sr.ReadLine();
                 try
                 {
-                  MemoryBox.Text = line.Split(' ')[1].Split('x')[1];
+                    MemoryBox.Text = line.Split(' ')[1].Split('x')[1];
                 }
                 catch
                 {
@@ -298,6 +301,10 @@ namespace MCServerInstaller
                     if (line.Contains("nogui"))
                     {
                         gui = false;
+                    }
+                    if (line.Contains("pause"))
+                    {
+                        DoNotExitCheckBox.IsChecked = true;
                     }
                     line = sr.ReadLine();
                 }
@@ -440,7 +447,7 @@ namespace MCServerInstaller
                 string[] files = Directory.GetFiles(MainWindow.editPath);
                 foreach (string file in files)
                 {
-                    if (file.Contains("forge"))
+                    if (file.Contains("forge") && file.Contains(".jar"))
                     {
                         serverPath = file;
                     }
@@ -449,11 +456,66 @@ namespace MCServerInstaller
                 {
                     foreach (string file in files)
                     {
-                        if (file.Contains("minecraft"))
+                        if (file.Contains("minecraft") && file.Contains(".jar"))
                         {
                             serverPath = file;
                         }
                     }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("spigot") && file.Contains(".jar"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("craftbukkit") && file.Contains(".jar"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("Magma") && file.Contains(".jar"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("Mohist") && file.Contains(".jar"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("paper") && file.Contains(".jar"))
+                        {
+                            serverPath = file;
+                        }
+                    }
+                }
+                if (serverPath == null)
+                {
+                    MessageBox.Show("Failed to save!");
+                    return;
                 }
             }
             string startup = null;
@@ -475,6 +537,10 @@ namespace MCServerInstaller
             {
                 sw.WriteLine(@"cd /d " + MainWindow.startupPath +  "\\" + MainWindow.editPath);
                 sw.WriteLine(startup);
+                if (DoNotExitCheckBox.IsChecked == true)
+                {
+                    sw.WriteLine("pause");
+                }
             }
             if (NoJava.IsChecked == true && Directory.Exists(MainWindow.editPath + "\\Java"))
             {
@@ -483,12 +549,20 @@ namespace MCServerInstaller
                     File.Delete(MainWindow.editPath + "\\Java.txt");
                     Directory.Delete(MainWindow.editPath + "\\Java", true);
                     startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
+                    if (GuiCheckbox.IsChecked == false)
+                    {
+                        startup = startup + " nogui";
+                    }
                     File.Delete(MainWindow.editPath + "\\StartServer.bat");
                     File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
                     using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\StartServer.bat"))
                     {
                         sw.WriteLine(@"cd /d " + MainWindow.startupPath + "\\" + MainWindow.editPath);
                         sw.WriteLine(startup);
+                        if (DoNotExitCheckBox.IsChecked == true)
+                        {
+                            sw.WriteLine("pause");
+                        }
                     }
                 }
                 catch (Exception e)
@@ -498,24 +572,29 @@ namespace MCServerInstaller
             }
             if (File.Exists(MainWindow.editPath + "\\Java.txt"))
             {
+                bool deleteJavaTxt = false;
                 using (StreamReader sr = new StreamReader(MainWindow.editPath + "\\Java.txt"))
                 {
                     string version = sr.ReadLine();
                     if (Java8.IsChecked == true && version != "8")
                     {
-                        Directory.Delete(MainWindow.editPath + "\\Java");
-                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                        Directory.Delete(MainWindow.editPath + "\\Java", true);
+                        deleteJavaTxt = true;
                     }
                     if (Java11.IsChecked == true && version != "11")
                     {
-                        Directory.Delete(MainWindow.editPath + "\\Java");
-                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                        Directory.Delete(MainWindow.editPath + "\\Java", true);
+                        deleteJavaTxt = true;
                     }
                     if (Java16.IsChecked == true && version != "16")
                     {
-                        Directory.Delete(MainWindow.editPath + "\\Java");
-                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                        Directory.Delete(MainWindow.editPath + "\\Java", true);
+                        deleteJavaTxt = true;
                     }
+                }
+                if (deleteJavaTxt == true)
+                {
+                    File.Delete(MainWindow.editPath + "\\Java.txt");
                 }
             }
             if (Java8.IsChecked == true && !Directory.Exists(MainWindow.editPath + "\\Java"))
@@ -528,7 +607,7 @@ namespace MCServerInstaller
                     }
                     ZipFile.ExtractToDirectory(MainWindow.editPath + "\\Java.zip", MainWindow.editPath + "\\Java");
                     File.Delete(MainWindow.editPath + "\\Java.zip");
-                    File.Create(MainWindow.editPath + "\\Java.txt");
+                    File.Create(MainWindow.editPath + "\\Java.txt").Close();
                     using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\Java.txt"))
                     {
                         sw.WriteLine("8");
@@ -561,7 +640,7 @@ namespace MCServerInstaller
                     }
                     ZipFile.ExtractToDirectory(MainWindow.editPath + "\\Java.zip", MainWindow.editPath + "\\Java");
                     File.Delete(MainWindow.editPath + "\\Java.zip");
-                    File.Create(MainWindow.editPath + "\\Java.txt");
+                    File.Create(MainWindow.editPath + "\\Java.txt").Close();
                     using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\Java.txt"))
                     {
                         sw.WriteLine("11");
@@ -594,15 +673,15 @@ namespace MCServerInstaller
                     }
                     ZipFile.ExtractToDirectory(MainWindow.editPath + "\\Java.zip", MainWindow.editPath + "\\Java");
                     File.Delete(MainWindow.editPath + "\\Java.zip");
-                    File.Create(MainWindow.editPath + "\\Java.txt");
+                    File.Create(MainWindow.editPath + "\\Java.txt").Close();
                     using (StreamWriter sw = new StreamWriter(MainWindow.editPath + "\\Java.txt"))
                     {
                         sw.WriteLine("16");
                     }
                 }
-                catch
+                catch (Exception e)
                 {
-                    MessageBox.Show("Could not download Java 16!");
+                    MessageBox.Show(e.Message);
                     startup = "java -Xmx" + MemoryBox.Text + " -Xms" + MemoryBox.Text + " -jar " + serverPath.Split('\\')[serverPath.Split('\\').Length - 1] + " true";
                     File.Delete(MainWindow.editPath + "\\StartServer.bat");
                     File.Create(MainWindow.editPath + "\\StartServer.bat").Close();
@@ -613,7 +692,14 @@ namespace MCServerInstaller
                     }
                     if (File.Exists(MainWindow.editPath + "\\Java.txt"))
                     {
-                        File.Delete(MainWindow.editPath + "\\Java.txt");
+                        try
+                        {
+                            File.Delete(MainWindow.editPath + "\\Java.txt");
+                        }
+                        catch (Exception e2)
+                        {
+                            MessageBox.Show(e2.Message);
+                        }
                     }
                 }
             }
@@ -734,6 +820,12 @@ namespace MCServerInstaller
             {
                 return;
             }
+        }
+
+        private void ImportCForgeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ImportCurseForgeWindow importCurseForgeWindow = new ImportCurseForgeWindow();
+            importCurseForgeWindow.ShowDialog();
         }
     }
 }

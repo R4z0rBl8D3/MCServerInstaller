@@ -8,7 +8,7 @@
         Title="Edit" Height="450" Width="815">
     <Grid>
         <Label Content="Edit" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30"/>
-        <CheckBox x:Name="GuiCheckbox" Content="Gui" HorizontalAlignment="Left" Margin="10,371,0,0" VerticalAlignment="Top" IsChecked="true"/>
+        <CheckBox x:Name="GuiCheckbox" Content="Gui" HorizontalAlignment="Left" Margin="10,371,0,0" VerticalAlignment="Top"/>
         <Label Content="Max memory" HorizontalAlignment="Left" Margin="53,364,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="MemoryBox" HorizontalAlignment="Left" Height="20" Margin="133,369,0,0" TextWrapping="Wrap" Text="4G" VerticalAlignment="Top" Width="59"/>
         <Label Content="Startup" HorizontalAlignment="Left" Margin="0,334,0,0" VerticalAlignment="Top" FontSize="20"/>
@@ -62,6 +62,10 @@
         <RadioButton x:Name="Java11" Content="Install Java 11" HorizontalAlignment="Left" Margin="198,370,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="Java16" Content="Install Java 16" HorizontalAlignment="Left" Margin="315,371,0,0" VerticalAlignment="Top"/>
         <Label Content="Java version" HorizontalAlignment="Left" Margin="194,326,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <CheckBox x:Name="DoNotExitCheckBox" Content="Don't exit" HorizontalAlignment="Left" Margin="121,349,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="ImportCForgeBtn" Content="Import from Curseforge" HorizontalAlignment="Left" Margin="666,147,0,0" VerticalAlignment="Top" Width="131" Click="ImportCForgeBtn_Click"/>
+        <Label Content="Curseforge" HorizontalAlignment="Left" Margin="663,106,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Label Content="(Experimental)" HorizontalAlignment="Left" Margin="663,129,0,0" VerticalAlignment="Top" FontSize="8"/>
 
     </Grid>
 </Window>
