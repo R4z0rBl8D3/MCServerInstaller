@@ -176,7 +176,8 @@ namespace MCServerInstaller
                 p.WaitForExit();
                 p.Start();
             }
-            await Task.Delay(3000);
+            await Task.Delay(1000);
+            p.Close();
             this.Hide();
         }
     }

@@ -20,6 +20,8 @@ namespace MCServerInstaller
     /// </summary>
     public partial class ImportCurseForgeWindow : Window
     {
+        public static int filesCopied = 0;
+
         public ImportCurseForgeWindow()
         {
             InitializeComponent();
@@ -49,6 +51,7 @@ namespace MCServerInstaller
             {
                 string tempPath = System.IO.Path.Combine(destDirName, file.Name);
                 file.CopyTo(tempPath, false);
+                filesCopied++;
             }
 
             // If copying subdirectories, copy them and their contents to new location.
@@ -97,6 +100,7 @@ namespace MCServerInstaller
 
         private void ImportBtn_Click(object sender, RoutedEventArgs e)
         {
+            filesCopied = 0;
             if (PackListBox.SelectedIndex == -1)
             {
                 MessageBox.Show("You need to select something!");
@@ -133,6 +137,7 @@ namespace MCServerInstaller
                     if (!File.Exists(MainWindow.editPath + "\\scripts\\" + file.Split('\\')[file.Split('\\').Length - 1]))
                     {
                         File.Copy(file, MainWindow.editPath + "\\scripts\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
                     }
                 }
             }
@@ -140,17 +145,115 @@ namespace MCServerInstaller
             {
                 if (!File.Exists(MainWindow.editPath + "\\mods"))
                 {
-                    Directory.CreateDirectory(MainWindow.editPath + "\\resources");
+                    Directory.CreateDirectory(MainWindow.editPath + "\\mods");
                 }
                 foreach (string file in Directory.GetFiles(path + "\\mods"))
                 {
                     if (!File.Exists(MainWindow.editPath + "\\mods\\" + file.Split('\\')[file.Split('\\').Length - 1]))
                     {
                         File.Copy(file, MainWindow.editPath + "\\mods\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
                     }
                 }
             }
-            MessageBox.Show("Finished!");
+            if (Directory.Exists(path + "\\resourcepacks"))
+            {
+                if (!File.Exists(MainWindow.editPath + "\\resourcepacks"))
+                {
+                    Directory.CreateDirectory(MainWindow.editPath + "\\resourcepacks");
+                }
+                foreach (string file in Directory.GetFiles(path + "\\resourcepacks"))
+                {
+                    if (!File.Exists(MainWindow.editPath + "\\resourcepacks\\" + file.Split('\\')[file.Split('\\').Length - 1]))
+                    {
+                        File.Copy(file, MainWindow.editPath + "\\resourcepacks\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
+                    }
+                }
+            }
+            if (Directory.Exists(path + "\\structures\\active"))
+            {
+                if (!File.Exists(MainWindow.editPath + "\\structures\\active"))
+                {
+                    Directory.CreateDirectory(MainWindow.editPath + "\\structures\\active");
+                }
+                foreach (string file in Directory.GetFiles(path + "\\structures\\active"))
+                {
+                    if (!File.Exists(MainWindow.editPath + "\\structures\\active\\" + file.Split('\\')[file.Split('\\').Length - 1]))
+                    {
+                        File.Copy(file, MainWindow.editPath + "\\structures\\active\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
+                    }
+                }
+            }
+            if (Directory.Exists(path + "\\structures\\downloads"))
+            {
+                if (!File.Exists(MainWindow.editPath + "\\structures\\downloads"))
+                {
+                    Directory.CreateDirectory(MainWindow.editPath + "\\structures\\downloads");
+                }
+                foreach (string file in Directory.GetFiles(path + "\\structures\\downloads"))
+                {
+                    if (!File.Exists(MainWindow.editPath + "\\structures\\downloads\\" + file.Split('\\')[file.Split('\\').Length - 1]))
+                    {
+                        File.Copy(file, MainWindow.editPath + "\\structures\\downloads\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
+                    }
+                }
+            }
+            if (Directory.Exists(path + "\\structures\\inactive"))
+            {
+                if (!File.Exists(MainWindow.editPath + "\\structures\\inactive"))
+                {
+                    Directory.CreateDirectory(MainWindow.editPath + "\\structures\\inactive");
+                }
+                foreach (string file in Directory.GetFiles(path + "\\structures\\inactive"))
+                {
+                    if (!File.Exists(MainWindow.editPath + "\\structures\\inactive\\" + file.Split('\\')[file.Split('\\').Length - 1]))
+                    {
+                        File.Copy(file, MainWindow.editPath + "\\structures\\inactive\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
+                    }
+                }
+            }
+            if (Directory.Exists(path + "\\structures\\schematics"))
+            {
+                if (!File.Exists(MainWindow.editPath + "\\structures\\schematics"))
+                {
+                    Directory.CreateDirectory(MainWindow.editPath + "\\structures\\schematics");
+                }
+                foreach (string file in Directory.GetFiles(path + "\\structures\\schematics"))
+                {
+                    if (!File.Exists(MainWindow.editPath + "\\structures\\schematics\\" + file.Split('\\')[file.Split('\\').Length - 1]))
+                    {
+                        File.Copy(file, MainWindow.editPath + "\\structures\\schematics\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
+                    }
+                }
+            }
+            if (Directory.Exists(path + "\\config"))
+            {
+                if (!File.Exists(MainWindow.editPath + "\\config"))
+                {
+                    Directory.CreateDirectory(MainWindow.editPath + "\\config");
+                }
+                foreach (string file in Directory.GetFiles(path + "\\config"))
+                {
+                    if (!File.Exists(MainWindow.editPath + "\\config\\" + file.Split('\\')[file.Split('\\').Length - 1]))
+                    {
+                        File.Copy(file, MainWindow.editPath + "\\config\\" + file.Split('\\')[file.Split('\\').Length - 1]);
+                        filesCopied++;
+                    }
+                }
+                foreach (string file in Directory.GetDirectories(path + "\\config"))
+                {
+                    if (!Directory.Exists(MainWindow.editPath + "\\config\\" + file.Split('\\')[file.Split('\\').Length - 1]))
+                    {
+                        DirectoryCopy(file, MainWindow.editPath + "\\config\\" + file.Split('\\')[file.Split('\\').Length - 1], true);
+                    }
+                }
+            }
+            MessageBox.Show("Finished!" + Environment.NewLine + filesCopied.ToString() + " files copied!");
         }
     }
 }
