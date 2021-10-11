@@ -33,7 +33,7 @@ namespace MCServerInstaller
         public static string startupPath = Environment.CurrentDirectory;
         public static string selectedSoftware = null;
         public static string selectedVersion = null;
-        public static float version = 1.1f;
+        public static float version = 1.3f;
 
         public MainWindow()
         {
@@ -70,8 +70,58 @@ namespace MCServerInstaller
             }
         }
 
+        private void update(float lVersion)
+        {
+            MessageBoxResult messageResult = MessageBox.Show("There is a new version of MCServerInstaller, do you want to install it? Current version: v" + version + " Latest version: v" + lVersion, "Update", MessageBoxButton.YesNo);
+            if (messageResult == MessageBoxResult.Yes)
+            {
+                //gud
+            }
+            else if (messageResult == MessageBoxResult.No)
+            {
+                return;
+            }
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadFile("https://github.com/R4z0rBl8D3/AppUpdater/releases/download/v1.0/Release.zip", "updater.zip");
+            }
+            ZipFile.ExtractToDirectory("updater.zip", "Updater");
+            File.Delete("updater.zip");
+            File.Create("Updater\\Update.txt").Close();
+            using (StreamWriter sw = new StreamWriter("Updater\\Update.txt"))
+            {
+                sw.WriteLine("https://github.com/R4z0rBl8D3/MCServerInstaller/releases/download/v1.1/Release.zip");
+                sw.WriteLine("Servers");
+            }
+            Process.Start("Updater\\AppUpdater.exe");
+            this.Close();
+        }
+
         private async void onLoad(object sender, RoutedEventArgs e)
         {
+            if (Directory.Exists("Updater"))
+            {
+                if (!File.Exists("Updater\\Log.txt"))
+                {
+                    MessageBox.Show("Update failed!");
+                }
+                else
+                {
+                    using (StreamReader sr = new StreamReader("Updater\\Log.txt"))
+                    {
+                        string log = sr.ReadLine();
+                        if (log == "Successful")
+                        {
+                            MessageBox.Show("Update successful!");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Update failed!");
+                        }
+                    }
+                }
+                Directory.Delete("Updater", true);
+            }
             if (File.Exists("latest.txt"))
             {
                 File.Delete("latest.txt");
@@ -87,7 +137,7 @@ namespace MCServerInstaller
             }
             if (lVersion > version)
             {
-                MessageBox.Show("There is a new version of MCServerInstaller");
+                update(lVersion);
             }
             if (File.Exists("versions.txt"))
             {
