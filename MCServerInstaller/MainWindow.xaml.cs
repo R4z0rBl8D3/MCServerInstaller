@@ -33,7 +33,7 @@ namespace MCServerInstaller
         public static string startupPath = Environment.CurrentDirectory;
         public static string selectedSoftware = null;
         public static string selectedVersion = null;
-        public static float version = 1.2f;
+        public static float version = 1.1f;
 
         public MainWindow()
         {
@@ -70,45 +70,6 @@ namespace MCServerInstaller
             }
         }
 
-        private void update(float lVersion)
-        {
-            MessageBoxResult messageResult = MessageBox.Show("You have an older version of MCServerInstaller, do you want to automatically update? You have: v" + version + " Latest: v" + lVersion, "Update", MessageBoxButton.YesNo);
-            if (messageResult == MessageBoxResult.Yes)
-            {
-                //gud
-            }
-            else if (messageResult == MessageBoxResult.No)
-            {
-                return;
-            }
-            if (File.Exists("update.zip"))
-            {
-                File.Delete("update.zip");
-            }
-            if (Directory.Exists("Updater"))
-            {
-                Directory.Delete("Updater", true);
-            }
-            using (var client = new WebClient())
-            {
-                client.DownloadFile("https://github.com/R4z0rBl8D3/AppUpdater/releases/download/v1.0/Release.zip", "update.zip");
-            }
-            ZipFile.ExtractToDirectory("update.zip", "Updater");
-            File.Delete("update.zip");
-            File.Create("Updater\\Update.txt");
-            using (StreamWriter sw = new StreamWriter("Updater\\Update.txt"))
-            {
-                sw.WriteLine("https://github.com/R4z0rBl8D3/MCServerInstaller/releases/download/v" + lVersion + "/Release.zip");
-                sw.WriteLine("Servers");
-            }
-            Process p = new Process();
-            p.StartInfo.FileName = "Updater\\AppUpdater.exe";
-            p.Start();
-            p.WaitForExit();
-            Directory.Delete("Updater", true);
-            this.Close();
-        }
-
         private async void onLoad(object sender, RoutedEventArgs e)
         {
             if (File.Exists("latest.txt"))
@@ -119,13 +80,14 @@ namespace MCServerInstaller
             {
                 client.DownloadFile(fileUrls + "latest.txt", "latest.txt");
             }
+            float lVersion = 0;
             using (StreamReader sr = new StreamReader("latest.txt"))
             {
-                float lVersion = float.Parse(sr.ReadLine());
-                if (lVersion > version)
-                {
-                    update(lVersion);
-                }
+                lVersion = float.Parse(sr.ReadLine());
+            }
+            if (lVersion > version)
+            {
+                MessageBox.Show("There is a new version of MCServerInstaller");
             }
             if (File.Exists("versions.txt"))
             {
