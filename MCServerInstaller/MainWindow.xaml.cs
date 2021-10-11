@@ -33,7 +33,7 @@ namespace MCServerInstaller
         public static string startupPath = Environment.CurrentDirectory;
         public static string selectedSoftware = null;
         public static string selectedVersion = null;
-        public static float version = 1.3f;
+        public static float version = 1.2f;
 
         public MainWindow()
         {
@@ -90,7 +90,7 @@ namespace MCServerInstaller
             File.Create("Updater\\Update.txt").Close();
             using (StreamWriter sw = new StreamWriter("Updater\\Update.txt"))
             {
-                sw.WriteLine("https://github.com/R4z0rBl8D3/MCServerInstaller/releases/download/v1.1/Release.zip");
+                sw.WriteLine("https://github.com/R4z0rBl8D3/MCServerInstaller/releases/download/v" + lVersion + "/Release.zip");
                 sw.WriteLine("Servers");
             }
             Process.Start("Updater\\AppUpdater.exe");
