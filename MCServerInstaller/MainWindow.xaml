@@ -18,6 +18,10 @@
         <Button x:Name="EditBtn" Content="Edit" HorizontalAlignment="Left" Margin="175,94,0,0" VerticalAlignment="Top" Width="75" Click="EditBtn_Click"/>
         <Label Content="Software" HorizontalAlignment="Left" Margin="400,313,0,0" VerticalAlignment="Top"/>
         <ListBox x:Name="SoftwareListBox" HorizontalAlignment="Left" Height="70" Margin="400,339,0,0" VerticalAlignment="Top" Width="400"/>
+        <Button x:Name="rNotesBtn" Content="Release Notes" HorizontalAlignment="Left" Margin="721,0,0,0" VerticalAlignment="Top" Width="79" Click="rNotesBtn_Click"/>
+        <Button x:Name="jVersionBtn" Content="Get Java Version" HorizontalAlignment="Left" Margin="630,0,0,0" VerticalAlignment="Top" Width="91" Click="jVersionBtn_Click"/>
+        <Button x:Name="aVersionBtn" Content="Get app version" HorizontalAlignment="Left" Margin="541,0,0,0" VerticalAlignment="Top" Width="89" Click="aVersionBtn_Click"/>
+        <Button x:Name="updateBtn" Content="Get update" HorizontalAlignment="Left" Margin="466,0,0,0" VerticalAlignment="Top" Width="75" Click="updateBtn_Click"/>
 
     </Grid>
 </Window>

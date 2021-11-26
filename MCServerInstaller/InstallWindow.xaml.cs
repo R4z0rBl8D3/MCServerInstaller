@@ -132,11 +132,12 @@ namespace MCServerInstaller
                     }
                 }
             }
-            if (MainWindow.selectedSoftware == "Forge" || MainWindow.selectedSoftware == "Fabric" || MainWindow.selectedSoftware == "Paper" || MainWindow.selectedSoftware == "Magma" || MainWindow.selectedSoftware == "Mohist")
+            if (MainWindow.selectedSoftware == "Forge" || MainWindow.selectedSoftware == "Fabric" || MainWindow.selectedSoftware == "Paper" || MainWindow.selectedSoftware == "Magma" || MainWindow.selectedSoftware == "Mohist" || MainWindow.selectedSoftware == "Vanilla")
             {
                 StatusTxt.Content = "Downloading " + MainWindow.selectedSoftware + "...";
                 using (WebClient wc = new WebClient())
                 {
+                    MessageBox.Show(MainWindow.fileUrls + MainWindow.selectedVersion);
                     wc.DownloadFile(new System.Uri(MainWindow.fileUrls + MainWindow.selectedVersion), "temp\\server.zip");
                 }
                 ZipFile.ExtractToDirectory("temp\\server.zip", "Servers\\" + MainWindow.name);
@@ -149,7 +150,7 @@ namespace MCServerInstaller
                     string server = null;
                     foreach (string file in Directory.GetFiles("Servers\\" + MainWindow.name))
                     {
-                        if (file.Split('\\')[file.Split('\\').Length - 1].Contains("forge") || file.Split('\\')[file.Split('\\').Length - 1].Contains("fabric") || file.Split('\\')[file.Split('\\').Length - 1].Contains("paper") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Magma") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Mohist") || file.Split('\\')[file.Split('\\').Length - 1].Contains("mohist") && file.Contains(".jar"))
+                        if (file.Split('\\')[file.Split('\\').Length - 1].Contains("forge") || file.Split('\\')[file.Split('\\').Length - 1].Contains("fabric") || file.Split('\\')[file.Split('\\').Length - 1].Contains("paper") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Magma") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Mohist") || file.Split('\\')[file.Split('\\').Length - 1].Contains("mohist") && file.Contains(".jar") || file.Split('\\')[file.Split('\\').Length - 1].Contains("Vanilla"))
                         {
                             server = file.Split('\\')[file.Split('\\').Length - 1];
                         }

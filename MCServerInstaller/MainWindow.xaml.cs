@@ -33,12 +33,14 @@ namespace MCServerInstaller
         public static string startupPath = Environment.CurrentDirectory;
         public static string selectedSoftware = null;
         public static string selectedVersion = null;
-        public static float version = 1.2f;
+        public static float version = 1.3f;
+        public static string releaseNotes = "-Added this release notes thing\n-Added vanilla server jars\n";
 
         public MainWindow()
         {
             InitializeComponent();
             Loaded += onLoad;
+            SoftwareListBox.Items.Add("Vanilla");
             SoftwareListBox.Items.Add("CraftBukkit");
             SoftwareListBox.Items.Add("Fabric");
             SoftwareListBox.Items.Add("Forge");
@@ -87,6 +89,11 @@ namespace MCServerInstaller
             }
             ZipFile.ExtractToDirectory("updater.zip", "Updater");
             File.Delete("updater.zip");
+            File.Create("Updater\\Startup.txt").Close();
+            using (StreamWriter sw = new StreamWriter("Updater\\Startup.txt"))
+            {
+                sw.WriteLine("MCServerInstaller.exe");
+            }
             File.Create("Updater\\Update.txt").Close();
             using (StreamWriter sw = new StreamWriter("Updater\\Update.txt"))
             {
@@ -113,6 +120,7 @@ namespace MCServerInstaller
                         if (log == "Successful")
                         {
                             MessageBox.Show("Update successful!");
+                            MessageBox.Show(releaseNotes, "Version v" + version);
                         }
                         else
                         {
@@ -229,6 +237,13 @@ namespace MCServerInstaller
                     if (SoftwareListBox.SelectedItem.ToString() == "Fabric")
                     {
                         if (line.Contains("Fabric"))
+                        {
+                            AvailableListBox.Items.Add(line);
+                        }
+                    }
+                    if (SoftwareListBox.SelectedItem.ToString() == "Vanilla")
+                    {
+                        if (line.Contains("Vanilla"))
                         {
                             AvailableListBox.Items.Add(line);
                         }
@@ -450,6 +465,66 @@ namespace MCServerInstaller
             editPath = "Servers\\" + InstalledListBox.SelectedItem.ToString();
             EditWindow editWindow = new EditWindow();
             editWindow.ShowDialog();
+        }
+
+        private void updateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists("latest.txt"))
+            {
+                File.Delete("latest.txt");
+            }
+            using (var client = new WebClient())
+            {
+                client.DownloadFile(fileUrls + "latest.txt", "latest.txt");
+            }
+            float lVersion = 0;
+            using (StreamReader sr = new StreamReader("latest.txt"))
+            {
+                lVersion = float.Parse(sr.ReadLine());
+            }
+            MessageBoxResult messageResult = MessageBox.Show("Are you sure you want to download the latest version of MCServerInstaller? Current version: v" + version + " Latest version: v" + lVersion, "Do you want to update?", MessageBoxButton.YesNo);
+            if (messageResult == MessageBoxResult.Yes)
+            {
+                //gud
+            }
+            else if (messageResult == MessageBoxResult.No)
+            {
+                return;
+            }
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadFile("https://github.com/R4z0rBl8D3/AppUpdater/releases/download/v1.0/Release.zip", "updater.zip");
+            }
+            ZipFile.ExtractToDirectory("updater.zip", "Updater");
+            File.Delete("updater.zip");
+            File.Create("Updater\\Startup.txt").Close();
+            using (StreamWriter sw = new StreamWriter("Updater\\Startup.txt"))
+            {
+                sw.WriteLine("MCServerInstaller.exe");
+            }
+            File.Create("Updater\\Update.txt").Close();
+            using (StreamWriter sw = new StreamWriter("Updater\\Update.txt"))
+            {
+                sw.WriteLine("https://github.com/R4z0rBl8D3/MCServerInstaller/releases/download/v" + lVersion + "/Release.zip");
+                sw.WriteLine("Servers");
+            }
+            Process.Start("Updater\\AppUpdater.exe");
+            this.Close();
+        }
+
+        private void aVersionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Current app version is: v" + version);
+        }
+
+        private void jVersionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Your Java version is: " + getJavaVersion());
+        }
+
+        private void rNotesBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(releaseNotes, "Version v" + version);
         }
     }
 }
