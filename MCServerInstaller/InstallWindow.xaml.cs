@@ -137,7 +137,6 @@ namespace MCServerInstaller
                 StatusTxt.Content = "Downloading " + MainWindow.selectedSoftware + "...";
                 using (WebClient wc = new WebClient())
                 {
-                    MessageBox.Show(MainWindow.fileUrls + MainWindow.selectedVersion);
                     wc.DownloadFile(new System.Uri(MainWindow.fileUrls + MainWindow.selectedVersion), "temp\\server.zip");
                 }
                 ZipFile.ExtractToDirectory("temp\\server.zip", "Servers\\" + MainWindow.name);
