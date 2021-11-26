@@ -1,5 +1,5 @@
 # MCServerInstaller
-![wow](https://user-images.githubusercontent.com/88277260/136707874-664157a2-c804-4a45-8583-d9d0636f188d.png)
+![MCServerInstaller](https://user-images.githubusercontent.com/88277260/143619834-2910ed82-a439-466e-919f-e80538fe899c.png)
 This app can create a server locally.
 This app is missing some versions of Minecraft, like 1.17.1 because the installer didn't work or the server ended up being weird. Or because I was too lazy.
 # How to use it
