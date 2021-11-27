@@ -33,8 +33,8 @@ namespace MCServerInstaller
         public static string startupPath = Environment.CurrentDirectory;
         public static string selectedSoftware = null;
         public static string selectedVersion = null;
-        public static float version = 1.3f;
-        public static string releaseNotes = "-Added this release notes thing\n-Added vanilla server jars\n";
+        public static float version = 1.4f;
+        public static string releaseNotes = "-Added a feature to copy everything from a CurseForge modpack in case it does not work";
 
         public MainWindow()
         {

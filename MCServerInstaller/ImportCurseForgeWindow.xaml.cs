@@ -255,5 +255,24 @@ namespace MCServerInstaller
             }
             MessageBox.Show("Finished!" + Environment.NewLine + filesCopied.ToString() + " files copied!");
         }
+
+        private void CopyEBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageResult = MessageBox.Show("You should use this if you have already tried importing and it not working, it might say Fatally missing registry entries. If that shows up or another error then use this feature.\nIt might create a mess in the server folder, are you sure you want to continue?", "Copy everything", MessageBoxButton.YesNo);
+            if (messageResult == MessageBoxResult.Yes)
+            {
+                //gud
+            }
+            else if (messageResult == MessageBoxResult.No)
+            {
+                return;
+            }
+            filesCopied = 0;
+            foreach (string folder in Directory.GetDirectories(DirBox.Text + "\\minecraft\\Instances\\" + PackListBox.SelectedItem))
+            {
+                DirectoryCopy(folder, MainWindow.editPath, true);
+            }
+            MessageBox.Show("Copied " + filesCopied + " files", "Copy completed");
+        }
     }
 }

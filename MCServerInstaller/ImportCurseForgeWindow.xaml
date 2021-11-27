@@ -12,6 +12,7 @@
         <Button x:Name="ImportBtn" Content="Import" HorizontalAlignment="Left" Margin="258,17,0,0" VerticalAlignment="Top" Width="74" Click="ImportBtn_Click"/>
         <Label Content="Curseforge minecraft directory" HorizontalAlignment="Left" Margin="0,160,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="DirBox" HorizontalAlignment="Left" Height="23" Margin="0,186,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="332"/>
+        <Button x:Name="CopyEBtn" Content="Copy everything" HorizontalAlignment="Left" Margin="168,17,0,0" VerticalAlignment="Top" Width="90" Click="CopyEBtn_Click"/>
 
     </Grid>
 </Window>
